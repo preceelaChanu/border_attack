@@ -1,8 +1,28 @@
-Stealthy Adversarial Border Attack ImplementationThis project implements the method proposed in the paper "Hiding in Plain Sight: Adversarial Attack via Style Transfer on Image Borders".The implementation focuses on generating adversarial examples by perturbing only the image borders, ensuring visual stealthiness via a style transfer fidelity loss, and measuring the Attack Success Rate (ASR) for both targeted and untargeted scenarios.Project Structuremain.py: Entry point for running attacks and calculating ASR.attack.py: Core implementation of the optimization algorithm and loss functions.models.py: Definitions for the Target Classifier (ResNet50) and Fidelity Model (VGG19).utils.py: Image preprocessing, border manipulation, and auxiliary functions.PrerequisitesPython 3.8+PyTorchTorchvisionNumpyPillowScipy (for L-BFGS if needed, though PyTorch has an implementation)Install dependencies:pip install -r requirements.txt
-Image Preprocessing StepsThe paper specifies a strict preprocessing pipeline to ensure the attack is valid and the model receives expected inputs. These steps are implemented in utils.py.Resize: The input image is resized to a square with side length 224 pixels.Range Normalization: Pixel values are scaled to the range [0, 1].Standardization (Model Specific):For the Target Model (ResNet50) and Fidelity Model (VGG19), the [0, 1] images are normalized using ImageNet mean and standard deviation:Mean: [0.485, 0.456, 0.406]Std: [0.229, 0.224, 0.225]Note: The attack optimization occurs in the [0, 1] space. The standardization is applied dynamically before feeding tensors into the networks.Usage1. Prepare DataPlace your clean images (e.g., .jpg or .png) in a directory (e.g., data/clean).2. Run Targeted AttackTo measure the success rate of misclassifying images into specific target classes.python main.py --data_dir ./data/clean --output_dir ./results/targeted --attack_type targeted --target_class 1
---target_class: The ImageNet class index (0-999) you want the model to predict.3. Run Untargeted AttackTo measure the success rate of misclassifying images away from their ground truth labels.python main.py --data_dir ./data/clean --output_dir ./results/untargeted --attack_type untargeted
-4. OutputThe script will print the Attack Success Rate (ASR) to the console:Processing image 1/100... Success
-Processing image 2/100... Failed
-...
-Final Attack Success Rate: 95.00%
-Key Implementation DetailsBorder Width: Set to 4 pixels by default (as optimized in the paper).Fidelity Loss: Uses VGG19 intermediate layers to calculate Style and Content loss on stacked borders (concatenated strips of the border) rather than the whole image, preventing inner content from interfering with the border style.Truncation Loss: Minimizes the rounding error between floating-point perturbations and the final integer pixel values (0-255).Optimization: Uses L-BFGS to minimize the total loss: $L_{total} = \lambda_A L_{attack} + \lambda_F L_{fidelity} + L_{truncation}$.
+# Stealthy Adversarial Border Attack Implementation
+
+This project implements the method proposed in the paper **"Hiding in Plain Sight: Adversarial Attack via Style Transfer on Image Borders"**.
+
+The implementation focuses on generating adversarial examples by perturbing only the image borders, ensuring visual stealthiness via a style transfer fidelity loss, and measuring the Attack Success Rate (ASR) for both targeted and untargeted scenarios.
+
+## Project Structure
+
+* **`main.py`**: Entry point for running attacks and calculating ASR.
+* **`attack.py`**: Core implementation of the optimization algorithm and loss functions.
+* **`models.py`**: Definitions for the Target Classifier (ResNet50) and Fidelity Model (VGG19).
+* **`utils.py`**: Image preprocessing, border manipulation, and auxiliary functions.
+
+## Prerequisites
+
+* Python 3.8+
+* PyTorch
+* Torchvision
+* Numpy
+* Pillow
+* Scipy (for L-BFGS implementation)
+
+### Installation
+
+Install the required dependencies:
+
+```bash
+pip install -r requirements.txt
