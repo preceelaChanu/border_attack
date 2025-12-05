@@ -16,7 +16,7 @@ You need a folder of images and, ideally, an ImageNet validation mapping file (t
 
 Example with a flat folder and a mapping file
 ```
-python preprocess.py --data_dir ./data/raw_images --output_dir ./data/processed --val_map ./val_ground_truth.txt --sample_size 5000
+python preprocessing.py --data_dir ./data/raw_images --output_dir ./data/processed --val_map ./val_ground_truth.txt --sample_size 5000
 ```
  * This will output .pt files (preprocessed tensors) and a dataset_meta.json file containing the labels.
 
