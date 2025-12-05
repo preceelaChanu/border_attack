@@ -26,3 +26,32 @@ Install the required dependencies:
 
 ```bash
 pip install -r requirements.txt
+
+
+
+Stealthy Adversarial Border Attack - Paper Replication
+This implementation strictly follows the methodology of "Hiding in Plain Sight".
+Workflow
+To replicate the paper's specific dataset conditions (3,645 valid images out of 5,000), we split the process into Preprocessing and Attacking.
+1. Preprocessing (Run Once)
+The paper requires removing:
+ * Grayscale images.
+ * Images that the model already misclassifies (to ensure ASR is calculated fairly).
+The preprocess.py script performs these checks and saves the valid, normalized image tensors to disk.
+Prerequisites:
+You need a folder of images and, ideally, an ImageNet validation mapping file (text file with filename class_index). If your images are in class folders (e.g., data/n01440764/img1.jpg), the script can infer labels too.
+# Example with a flat folder and a mapping file
+python preprocess.py --data_dir ./data/raw_images --output_dir ./data/processed --val_map ./val_ground_truth.txt --sample_size 5000
+
+ * This will output .pt files (preprocessed tensors) and a dataset_meta.json file containing the labels.
+2. Running the Attack
+Now you can run Targeted or Untargeted attacks using the exact same preprocessed data.
+Targeted Attack:
+# Attack specific target class (e.g., class 1)
+python main.py --data_dir ./data/processed --output_dir ./results/targeted --attack_type targeted --target_class 1
+
+Untargeted Attack:
+python main.py --data_dir ./data/processed --output_dir ./results/untargeted --attack_type untargeted
+
+3. Calculating Results
+The script will report the Attack Success Rate (ASR) based only on the images that were successfully preprocessed (the "3645" equivalent).
