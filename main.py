@@ -28,7 +28,7 @@ def main():
     # Load Metadata created by preprocess.py
     meta_path = os.path.join(args.data_dir, "dataset_meta.json")
     if not os.path.exists(meta_path):
-        raise FileNotFoundError(f"dataset_meta.json not found in {args.data_dir}. Run preprocess.py first.")
+        raise FileNotFoundError(f"dataset_meta.json not found in {args.data_dir}. Run preprocessing.py first.")
         
     with open(meta_path, 'r') as f:
         dataset_meta = json.load(f)
